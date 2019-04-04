@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -33,6 +34,9 @@ public class Controller implements Initializable {
     @FXML private TableColumn<LivroVO, String> colEditora;
     @FXML private TableColumn<LivroVO, Integer> colPaginas;
     @FXML private TableColumn<LivroVO, String> colStatus;
+
+    @FXML private Button btnLendo;
+    @FXML private Button btnTerminado;
 
     private ObservableList<LivroVO> livros;
     private LivroDAO dao;
@@ -67,7 +71,17 @@ public class Controller implements Initializable {
         dao = new LivroDAO();
         listar();
 
+
     }
+
+    private void configurarSelecaoGrid(){
+        tabLivros.getSelectionModel().selectedItemProperty().addListener(
+                ((observableValue, anterior, novo) -> )
+        );
+    }
+
+
+
     public void abrirNovo(ActionEvent event) throws IOException {
 
         abrirModal();
