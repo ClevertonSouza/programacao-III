@@ -22,9 +22,17 @@ public class AutorVO {
         this.nome = nome;
     }
 
-
     @Override
     public String toString() {
         return nome;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AutorVO autorVO = (AutorVO) o;
+        return id.equals(autorVO.id);
     }
 }

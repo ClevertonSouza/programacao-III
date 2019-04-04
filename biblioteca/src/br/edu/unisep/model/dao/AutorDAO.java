@@ -1,4 +1,4 @@
-package br.edu.unisep.model.dao;
+package br.edu.unisep.model.DAO;
 
 import br.edu.unisep.model.vo.AutorVO;
 

@@ -1,7 +1,7 @@
 package br.edu.unisep;
 
-import br.edu.unisep.model.dao.AutorDAO;
-import br.edu.unisep.model.dao.LivroDAO;
+import br.edu.unisep.model.DAO.AutorDAO;
+import br.edu.unisep.model.DAO.LivroDAO;
 import br.edu.unisep.model.vo.AutorVO;
 import br.edu.unisep.model.vo.LivroVO;
 import javafx.collections.FXCollections;
@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -26,46 +27,66 @@ public class NovoLivroController implements Initializable {
 
     @FXML private ChoiceBox<AutorVO> cmbAutor;
 
-    private Stage janela;
-    private Controller controller;
+    @FXML private Label lblTitulo;
 
+    private Stage janela;
+    private Controller ctrlLista;
+
+    private LivroVO livro = new LivroVO();
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(URL url, ResourceBundle resourceBundle){
 
         listarAutores();
-
     }
 
-    private void listarAutores () {
+    public void exibirDadosAlteracao(LivroVO livroSel){
+        livro.setId(livroSel.getId());
+        livro.setStatus(livroSel.getStatus());
 
+        txtTitulo.setText(livroSel.getTitulo());
+        txtEditora.setText(livroSel.getEditora());
+        txtPaginas.setText(livroSel.getPaginas().toString());
+        txtSinopse.setText(livroSel.getSinopse());
+        cmbAutor.setValue(livroSel.getAutor());
+
+        lblTitulo.setText("Alterar Livro");
+    }
+
+
+    private void listarAutores() {
         var dao = new AutorDAO();
         var lista = dao.listar();
 
         cmbAutor.setItems(FXCollections.observableList(lista));
+
     }
 
-    public void salvar(ActionEvent e){
-
-        var livro = new LivroVO();
+    public void salvar(ActionEvent event){
         livro.setTitulo(txtTitulo.getText());
         livro.setPaginas(Integer.valueOf(txtPaginas.getText()));
         livro.setEditora(txtEditora.getText());
         livro.setSinopse(txtSinopse.getText());
         livro.setStatus(1);
 
+        //Obtem o objeto AutorVO selecionado na combo de autores
+        //e valoriza o atributo autor do livro;
         livro.setAutor(cmbAutor.getValue());
 
         var dao = new LivroDAO();
-        dao.salvar(livro);
+
+        if (livro.getId() != null){
+            dao.alterar(livro);
+        } else {
+            dao.salvar(livro);
+        }
 
         janela.close();
-        controller.listar();
+        ctrlLista.listar();
     }
 
-    public void cancelar(ActionEvent e){
+    public void cancelar(ActionEvent event){
         janela.close();
-
     }
 
     public Stage getJanela() {
@@ -76,11 +97,11 @@ public class NovoLivroController implements Initializable {
         this.janela = janela;
     }
 
-    public Controller getController() {
-        return controller;
+    public Controller getCtrlLista() {
+        return ctrlLista;
     }
 
-    public void setController(Controller controller) {
-        this.controller = controller;
+    public void setCtrlLista(Controller ctrlLista) {
+        this.ctrlLista = ctrlLista;
     }
 }

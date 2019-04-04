@@ -1,6 +1,6 @@
 package br.edu.unisep;
 
-import br.edu.unisep.model.dao.LivroDAO;
+import br.edu.unisep.model.DAO.LivroDAO;
 import br.edu.unisep.model.vo.LivroVO;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -14,11 +14,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import javax.imageio.IIOException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -37,52 +38,75 @@ public class Controller implements Initializable {
     private LivroDAO dao;
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize(URL url, ResourceBundle resourceBundle){
+
         livros = FXCollections.observableArrayList();
         tabLivros.setItems(livros);
 
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colAutor.setCellValueFactory(new PropertyValueFactory<>("autor"));
-        colEditora.setCellValueFactory(new PropertyValueFactory<>( "editora"));
+        colEditora.setCellValueFactory(new PropertyValueFactory<>("editora"));
         colPaginas.setCellValueFactory(new PropertyValueFactory<>("paginas"));
-
-        colStatus.setCellValueFactory( cell -> {
+        colStatus.setCellValueFactory( cell ->{
             var l = cell.getValue();
 
-            if (l.getStatus() == 1){
-                return new SimpleStringProperty("Não Lido");
-            } else if (l.getStatus() == 2){
+            if(l.getStatus() == 1){
+                return new SimpleStringProperty("Não lido");
+            }else if(l.getStatus() == 2){
                 return new SimpleStringProperty("Lendo");
-            } else {
+            }else{
                 return new SimpleStringProperty("Lido");
             }
         });
 
+        colTitulo.setPrefWidth(Integer.MAX_VALUE * 35d);
+        colAutor.setPrefWidth(Integer.MAX_VALUE * 25d);
+        colEditora.setPrefWidth(Integer.MAX_VALUE * 20d);
+        colStatus.setPrefWidth(Integer.MAX_VALUE * 10d);
+        colPaginas.setPrefWidth(Integer.MAX_VALUE * 10d);
         dao = new LivroDAO();
         listar();
+
+    }
+    public void abrirNovo(ActionEvent event) throws IOException {
+
+        abrirModal();
+
     }
 
-    public void listar (){
-        var list = dao.listar();
-        livros.setAll(list);
+    private void abrirModal(LivroVO... livroSel) throws IOException {
+        var loader = new FXMLLoader((getClass().getResource("novo.fxml")));
+        var root = (Parent) loader.load();
+
+        var ctrl = (NovoLivroController) loader.getController();
+
+        var janela = new Stage();
+        janela.setScene(new Scene(root));
+        janela.initStyle(StageStyle.UTILITY);
+        janela.initModality(Modality.APPLICATION_MODAL);
+
+        janela.setResizable(false);
+
+        ctrl.setJanela(janela);
+        ctrl.setCtrlLista(this);
+
+        if (livroSel[0] != null){
+            ctrl.exibirDadosAlteracao(livroSel[0]);
+        }
+
+        janela.show();
     }
 
-    public void abrirNovo (ActionEvent e) throws IOException {
+    public void selecionarLivro(MouseEvent event) throws IOException{
+        if (event.getButton() == MouseButton.PRIMARY &&
+                event.getClickCount() ==2){
+            var livroSel = tabLivros.getSelectionModel().getSelectedItem();
+            abrirModal(livroSel);
+        }
+    }
 
-            var loader = new FXMLLoader(getClass().getResource("novo.fxml"));
-            var root = (Parent) loader.load();
-            var janela = new Stage();
-
-            var controller = (NovoLivroController) loader.getController();
-
-            janela.setScene(new Scene(root));
-            janela.initStyle(StageStyle.UTILITY);
-            janela.initModality(Modality.APPLICATION_MODAL);
-            janela.setResizable(false);
-
-            controller.setJanela(janela);
-
-
-            janela.show();
+    public void listar(){
+        var lst = dao.listar();
+        livros.setAll(lst);
     }
 }

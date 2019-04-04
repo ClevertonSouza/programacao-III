@@ -1,10 +1,8 @@
-package br.edu.unisep.model.dao;
+package br.edu.unisep.model.DAO;
 
 import br.edu.unisep.model.vo.AutorVO;
 import br.edu.unisep.model.vo.LivroVO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,15 +33,14 @@ public class LivroDAO {
             var ps = con.prepareStatement(sql.toString());
             var rs = ps.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 var l = new LivroVO();
-
                 l.setId(rs.getInt("id_livro"));
                 l.setTitulo(rs.getString("titulo_lv"));
                 l.setSinopse(rs.getString("sinopse_lv"));
                 l.setEditora(rs.getString("editora_lv"));
                 l.setPaginas(rs.getInt("paginas_lv"));
-                l.setStatus(rs.getInt("status_lv"));
+                l.setStatus((rs.getInt("status_lv")));
 
                 var a = new AutorVO();
                 a.setId(rs.getInt("id_autor"));
@@ -55,6 +52,7 @@ public class LivroDAO {
             }
 
             rs.close();
+            ps.close();
             con.close();
 
 
@@ -66,35 +64,69 @@ public class LivroDAO {
     }
 
 
-    public void salvar (LivroVO l){
+    public void salvar(LivroVO livro) {
 
-        try{
+        try {
 
             var con = Conexao.obterConexao();
 
-            var sql = new StringBuilder()
+            var sql=  new StringBuffer()
                     .append("INSERT INTO public.livro(")
-                    .append("titulo_lv, editora_lv, paginas_lv, status_lv, sinopse_lv, id_autor)")
-                    .append("VALUES (?, ?, ?, ?, ?, ?);")
-                    .toString();
-
+                    .append("titulo_lv, editora_lv, ")
+                    .append("paginas_lv, status_lv, ")
+                    .append("sinopse_lv, id_autor) ")
+                    .append("VALUES (?, ?, ?, ?, ?, ?)").toString();
 
             var ps = con.prepareStatement(sql);
-
-            ps.setString(1, l.getTitulo());
-            ps.setString(2, l.getEditora());
-            ps.setInt(3, l.getPaginas());
-            ps.setInt(4, l.getStatus());
-            ps.setString(5, l.getSinopse());
-            ps.setInt(6, l.getAutor().getId());
+            ps.setString(1,livro.getTitulo());
+            ps.setString(2,livro.getEditora());
+            ps.setInt(3,livro.getPaginas());
+            ps.setInt(4,livro.getStatus());
+            ps.setString(5,livro.getSinopse());
+            ps.setInt(6,livro.getAutor().getId());
 
             ps.execute();
-
             ps.close();
             con.close();
 
 
-        } catch (ClassNotFoundException | SQLException exception){
+        }catch(ClassNotFoundException | SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void alterar(LivroVO livro){
+
+        try {
+
+            var con = Conexao.obterConexao();
+
+            var sql = new StringBuilder()
+                    .append("UPDATE")
+                    .append(" public.livro SET titulo_lv=?,")
+                    .append(" editora_lv=?,")
+                    .append(" paginas_lv=?,")
+                    .append(" status_lv=?,")
+                    .append(" sinopse_lv=?,")
+                    .append(" id_autor=? ")
+                    .append("WHERE id_livro=?;").toString();
+
+            var ps = con.prepareStatement(sql);
+            ps.setString(1,livro.getTitulo());
+            ps.setString(2,livro.getEditora());
+            ps.setInt(3,livro.getPaginas());
+            ps.setInt(4,livro.getStatus());
+            ps.setString(5,livro.getSinopse());
+            ps.setInt(6,livro.getAutor().getId());
+            ps.setInt(7,livro.getId());
+
+            ps.execute();
+            ps.close();
+            con.close();
+
+
+        }catch(ClassNotFoundException | SQLException e){
+            e.printStackTrace();
         }
     }
 
