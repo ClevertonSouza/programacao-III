@@ -30,7 +30,8 @@
       <HBox layoutX="180.0" layoutY="359.0" prefHeight="27.0" prefWidth="200.0" spacing="10.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
          <children>
             <Button mnemonicParsing="false" onAction="#abrirNovo" text="Novo Livro" />
-            <Button mnemonicParsing="false" text="Excluir" />
+            <Button fx:id="btnLendo" disable="true" mnemonicParsing="false" onAction="#alterarStatus" text="Estou Lendo" />
+            <Button fx:id="btnTerminado" disable="true" mnemonicParsing="false" onAction="#alterarStatus" text="Terminei de Ler" />
          </children>
       </HBox>
    </children>

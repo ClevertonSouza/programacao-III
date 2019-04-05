@@ -71,12 +71,24 @@ public class Controller implements Initializable {
         dao = new LivroDAO();
         listar();
 
+        configurarSelecaoGrid();
 
     }
 
     private void configurarSelecaoGrid(){
         tabLivros.getSelectionModel().selectedItemProperty().addListener(
-                ((observableValue, anterior, novo) -> )
+                ((observableValue, anterior, novo) -> {
+                    btnLendo.setDisable(true);
+                    btnTerminado.setDisable(true);
+
+                    if (novo != null) {
+                        if (novo.getStatus() == 1) {
+                            btnLendo.setDisable(false);
+                        } else if (novo.getStatus() == 2) {
+                            btnTerminado.setDisable(false);
+                        }
+                    }
+                })
         );
     }
 
@@ -104,7 +116,7 @@ public class Controller implements Initializable {
         ctrl.setJanela(janela);
         ctrl.setCtrlLista(this);
 
-        if (livroSel[0] != null){
+        if (livroSel.length != 0){
             ctrl.exibirDadosAlteracao(livroSel[0]);
         }
 
@@ -122,5 +134,17 @@ public class Controller implements Initializable {
     public void listar(){
         var lst = dao.listar();
         livros.setAll(lst);
+
+        tabLivros.getSelectionModel().clearSelection();
+    }
+
+
+    public void alterarStatus(ActionEvent event){
+        var livro = tabLivros.getSelectionModel().getSelectedItem();
+        livro.setStatus(livro.getStatus() + 1);
+
+        dao.alterar(livro);
+
+        listar();
     }
 }

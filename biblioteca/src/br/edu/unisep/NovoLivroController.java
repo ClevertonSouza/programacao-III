@@ -8,10 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -63,26 +60,69 @@ public class NovoLivroController implements Initializable {
     }
 
     public void salvar(ActionEvent event){
-        livro.setTitulo(txtTitulo.getText());
-        livro.setPaginas(Integer.valueOf(txtPaginas.getText()));
-        livro.setEditora(txtEditora.getText());
-        livro.setSinopse(txtSinopse.getText());
-        livro.setStatus(1);
 
-        //Obtem o objeto AutorVO selecionado na combo de autores
-        //e valoriza o atributo autor do livro;
-        livro.setAutor(cmbAutor.getValue());
+        if (validar()) {
 
-        var dao = new LivroDAO();
+            livro.setTitulo(txtTitulo.getText().trim());
+            livro.setPaginas(Integer.valueOf(txtPaginas.getText().trim()));
+            livro.setEditora(txtEditora.getText().trim());
+            livro.setSinopse(txtSinopse.getText().trim());
+            livro.setStatus(1);
 
-        if (livro.getId() != null){
-            dao.alterar(livro);
-        } else {
-            dao.salvar(livro);
+            //Obtem o objeto AutorVO selecionado na combo de autores
+            //e valoriza o atributo autor do livro;
+            livro.setAutor(cmbAutor.getValue());
+
+            var dao = new LivroDAO();
+
+            if (livro.getId() != null) {
+                dao.alterar(livro);
+            } else {
+                dao.salvar(livro);
+            }
+
+            janela.close();
+            ctrlLista.listar();
+        }
+    }
+
+    private boolean validar(){
+
+        if (txtTitulo.getText().trim().length() == 0){
+            return exibirMsgErro("Titulo é obrigatório!");
         }
 
-        janela.close();
-        ctrlLista.listar();
+        if (cmbAutor.getValue() == null){
+            return exibirMsgErro("Autor é obrigatório!");
+        }
+
+        if (txtEditora.getText().trim().length() == 0){
+            return exibirMsgErro("Editora é obrigatório!");
+        }
+
+
+        try {
+            Integer.parseInt(txtPaginas.getText());
+        } catch (NumberFormatException e){
+            exibirMsgErro("Campo página inválido!");
+        }
+
+        if (txtSinopse.getText().trim().length() == 0){
+            return exibirMsgErro("Sinópse é obrigatório!");
+        }
+
+
+
+        return true;
+    }
+
+    private boolean exibirMsgErro(String s) {
+        var msg = new Alert(Alert.AlertType.ERROR, s);
+
+        msg.setHeaderText(null);
+        msg.show();
+
+        return false;
     }
 
     public void cancelar(ActionEvent event){
