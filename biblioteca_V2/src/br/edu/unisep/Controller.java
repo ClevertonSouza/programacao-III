@@ -1,5 +1,9 @@
 package br.edu.unisep;
 
+import br.edu.unisep.fx.annotation.ColValueMap;
+import br.edu.unisep.fx.annotation.FXColumn;
+import br.edu.unisep.fx.annotation.IntToString;
+import br.edu.unisep.fx.controller.AppController;
 import br.edu.unisep.model.DAO.LivroDAO;
 import br.edu.unisep.model.vo.LivroVO;
 import javafx.beans.property.SimpleStringProperty;
@@ -25,14 +29,28 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class Controller implements Initializable {
+public class Controller extends AppController {
 
     @FXML private TableView<LivroVO> tabLivros;
 
+    @FXColumn(property = "Titulo", percentWidth = 35)
     @FXML private TableColumn<LivroVO, String> colTitulo;
+
+    @FXColumn(property = "Autor", percentWidth = 25)
     @FXML private TableColumn<LivroVO, String> colAutor;
+
+    @FXColumn(property = "Editora", percentWidth = 20)
     @FXML private TableColumn<LivroVO, String> colEditora;
+
+    @FXColumn(property = "Paginas", percentWidth = 10)
     @FXML private TableColumn<LivroVO, Integer> colPaginas;
+
+    @FXColumn(property = "Status", percentWidth = 10)
+    @ColValueMap({
+            @IntToString(from = 1, to = "Não lido"),
+            @IntToString(from = 2, to = "Lendo"),
+            @IntToString(from = 3, to = "Lido")
+    })
     @FXML private TableColumn<LivroVO, String> colStatus;
 
     @FXML private Button btnLendo;
@@ -42,32 +60,11 @@ public class Controller implements Initializable {
     private LivroDAO dao;
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle){
+    public void onInit(){
 
         livros = FXCollections.observableArrayList();
         tabLivros.setItems(livros);
 
-        colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
-        colAutor.setCellValueFactory(new PropertyValueFactory<>("autor"));
-        colEditora.setCellValueFactory(new PropertyValueFactory<>("editora"));
-        colPaginas.setCellValueFactory(new PropertyValueFactory<>("paginas"));
-        colStatus.setCellValueFactory( cell ->{
-            var l = cell.getValue();
-
-            if(l.getStatus() == 1){
-                return new SimpleStringProperty("Não lido");
-            }else if(l.getStatus() == 2){
-                return new SimpleStringProperty("Lendo");
-            }else{
-                return new SimpleStringProperty("Lido");
-            }
-        });
-
-        colTitulo.setPrefWidth(Integer.MAX_VALUE * 35d);
-        colAutor.setPrefWidth(Integer.MAX_VALUE * 25d);
-        colEditora.setPrefWidth(Integer.MAX_VALUE * 20d);
-        colStatus.setPrefWidth(Integer.MAX_VALUE * 10d);
-        colPaginas.setPrefWidth(Integer.MAX_VALUE * 10d);
         dao = new LivroDAO();
         listar();
 
@@ -96,38 +93,16 @@ public class Controller implements Initializable {
 
     public void abrirNovo(ActionEvent event) throws IOException {
 
-        abrirModal();
+        openModal("novo.fxml", () -> listar());
 
     }
 
-    private void abrirModal(LivroVO... livroSel) throws IOException {
-        var loader = new FXMLLoader((getClass().getResource("novo.fxml")));
-        var root = (Parent) loader.load();
-
-        var ctrl = (NovoLivroController) loader.getController();
-
-        var janela = new Stage();
-        janela.setScene(new Scene(root));
-        janela.initStyle(StageStyle.UTILITY);
-        janela.initModality(Modality.APPLICATION_MODAL);
-
-        janela.setResizable(false);
-
-        ctrl.setJanela(janela);
-        ctrl.setCtrlLista(this);
-
-        if (livroSel.length != 0){
-            ctrl.exibirDadosAlteracao(livroSel[0]);
-        }
-
-        janela.show();
-    }
 
     public void selecionarLivro(MouseEvent event) throws IOException{
         if (event.getButton() == MouseButton.PRIMARY &&
                 event.getClickCount() ==2){
             var livroSel = tabLivros.getSelectionModel().getSelectedItem();
-            abrirModal(livroSel);
+            openModal("novo.fxml", this::listar, livroSel);
         }
     }
 

@@ -1,5 +1,8 @@
 package br.edu.unisep;
 
+import br.edu.unisep.fx.annotation.OnlyNumber;
+import br.edu.unisep.fx.annotation.Required;
+import br.edu.unisep.fx.controller.ModalController;
 import br.edu.unisep.model.DAO.AutorDAO;
 import br.edu.unisep.model.DAO.LivroDAO;
 import br.edu.unisep.model.vo.AutorVO;
@@ -14,27 +17,38 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class NovoLivroController implements Initializable {
+public class NovoLivroController extends ModalController {
 
+    @Required(campo = "Titulo")
     @FXML private TextField txtTitulo;
+
+    @Required(campo = "Editora")
     @FXML private TextField txtEditora;
+
+    @OnlyNumber
+    @Required(campo = "Paginas")
     @FXML private TextField txtPaginas;
 
+    @Required(campo = "Sinopse")
     @FXML private TextArea txtSinopse;
 
+    @Required(campo = "Autor")
     @FXML private ChoiceBox<AutorVO> cmbAutor;
 
     @FXML private Label lblTitulo;
 
-    private Stage janela;
-    private Controller ctrlLista;
-
     private LivroVO livro = new LivroVO();
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle){
+    public void onModalInit(){
 
         listarAutores();
+
+        if (params.length != 0){
+            var livroSel = (LivroVO) params[0];
+
+            exibirDadosAlteracao(livroSel);
+        }
     }
 
     public void exibirDadosAlteracao(LivroVO livroSel){
@@ -61,7 +75,7 @@ public class NovoLivroController implements Initializable {
 
     public void salvar(ActionEvent event){
 
-        if (validar()) {
+        if (validate()) {
 
             livro.setTitulo(txtTitulo.getText().trim());
             livro.setPaginas(Integer.valueOf(txtPaginas.getText().trim()));
@@ -81,67 +95,13 @@ public class NovoLivroController implements Initializable {
                 dao.salvar(livro);
             }
 
-            janela.close();
-            ctrlLista.listar();
+            closeModal();
         }
     }
 
-    private boolean validar(){
-
-        if (txtTitulo.getText().trim().length() == 0){
-            return exibirMsgErro("Titulo é obrigatório!");
-        }
-
-        if (cmbAutor.getValue() == null){
-            return exibirMsgErro("Autor é obrigatório!");
-        }
-
-        if (txtEditora.getText().trim().length() == 0){
-            return exibirMsgErro("Editora é obrigatório!");
-        }
-
-
-        try {
-            Integer.parseInt(txtPaginas.getText());
-        } catch (NumberFormatException e){
-            exibirMsgErro("Campo página inválido!");
-        }
-
-        if (txtSinopse.getText().trim().length() == 0){
-            return exibirMsgErro("Sinópse é obrigatório!");
-        }
-
-
-
-        return true;
-    }
-
-    private boolean exibirMsgErro(String s) {
-        var msg = new Alert(Alert.AlertType.ERROR, s);
-
-        msg.setHeaderText(null);
-        msg.show();
-
-        return false;
-    }
 
     public void cancelar(ActionEvent event){
-        janela.close();
+        closeModal();
     }
 
-    public Stage getJanela() {
-        return janela;
-    }
-
-    public void setJanela(Stage janela) {
-        this.janela = janela;
-    }
-
-    public Controller getCtrlLista() {
-        return ctrlLista;
-    }
-
-    public void setCtrlLista(Controller ctrlLista) {
-        this.ctrlLista = ctrlLista;
-    }
 }

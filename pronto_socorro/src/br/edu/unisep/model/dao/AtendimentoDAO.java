@@ -40,7 +40,7 @@ public class AtendimentoDAO {
                 var a = new AtendimentoVO();
                 a.setId(rs.getInt("id_atendimento"));
                 a.setDs_paciente(rs.getString("ds_paciente"));
-                a.setDt_nascimento(rs.getDate("dt_nascimento"));
+                a.setDt_nascimento(rs.getDate("dt_nascimento").toLocalDate());
                 a.setDs_sintomas(rs.getString("ds_sintomas"));
                 a.setTp_status(rs.getInt("tp_status"));
 

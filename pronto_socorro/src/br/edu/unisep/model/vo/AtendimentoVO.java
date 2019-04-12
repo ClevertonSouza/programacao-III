@@ -1,6 +1,7 @@
 package br.edu.unisep.model.vo;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class AtendimentoVO {
 
@@ -8,7 +9,7 @@ public class AtendimentoVO {
     private String ds_paciente;
     private PlanoSaudeVO id_plano;
     private EspecialidadeVO id_especialidade;
-    private Date dt_nascimento;
+    private LocalDate dt_nascimento;
     private String ds_sintomas;
     private Integer tp_status;
 
@@ -44,11 +45,11 @@ public class AtendimentoVO {
         this.id_especialidade = id_especialidade;
     }
 
-    public Date getDt_nascimento() {
+    public LocalDate getDt_nascimento() {
         return dt_nascimento;
     }
 
-    public void setDt_nascimento(Date dt_nascimento) {
+    public void setDt_nascimento(LocalDate dt_nascimento) {
         this.dt_nascimento = dt_nascimento;
     }
 
