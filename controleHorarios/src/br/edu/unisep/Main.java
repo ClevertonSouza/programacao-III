@@ -12,6 +12,8 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
         primaryStage.setScene(new Scene(root));
+        primaryStage.setTitle("Controle Horarios");
+        primaryStage.setMaximized(true);
         primaryStage.show();
     }
 

@@ -12,7 +12,7 @@ public class Conexao {
 
         var con = DriverManager.getConnection(
                 "jdbc:postgresql://localhost:5432/horarios",
-                "postgres", "admin");
+                "postgres", "1234");
 
         return con;
     }
