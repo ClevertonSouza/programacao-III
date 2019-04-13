@@ -46,18 +46,24 @@ public class CursoDAO {
 
             var rs = ps.executeQuery();
 
-            while (rs.next()){
+            while (rs.next()) {
                 var c = new CursoVO();
 
                 c.setId(rs.getInt("id_curso"));
-                c.setNome(rs.getString("ds_curso"));;
+                c.setNome(rs.getString("ds_curso"));
+                c.setTipo(rs.getInt("tp_curso"));
+                c.setDuracao(rs.getInt("vl_duracao"));
+
+                cursos.add(c);
             }
 
-        } catch (ClassNotFoundException | SQLException e){
+            rs.close();
+            ps.close();
+            con.close();
+
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
-
-        return null;
+        return cursos;
     }
-
 }
