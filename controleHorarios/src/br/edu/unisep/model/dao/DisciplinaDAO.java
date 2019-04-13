@@ -38,21 +38,13 @@ public class DisciplinaDAO {
         }
     }
 
-    public List<DisciplinaVO> listar() {
 
-        return null;
-    }
-
-
-
-    public List<DisciplinaVO> listar(CursoVO curso) {
-
+    private List<DisciplinaVO> listar(CursoVO... curso) {
         var disciplinas = new ArrayList<DisciplinaVO>();
 
         try {
 
             var con = Conexao.obterConexao();
-
             var sql = new StringBuilder()
                     .append("select ")
                     .append("d.ds_disciplina, ")
@@ -68,11 +60,16 @@ public class DisciplinaDAO {
                     .append("join ")
                     .append("curso c ")
                     .append("on c.id_curso = d.id_curso ")
-                    .append("where ")
-                    .append("c.id_curso = ?;").toString();
+                    ;
 
-            var ps = con.prepareStatement(sql);
-            ps.setInt(1, curso.getId());
+            if (curso.length != 0) {
+                sql.append("where c.id_curso = ?;");
+            }
+
+            var ps = con.prepareStatement(sql.toString());
+            if (curso.length != 0) {
+                ps.setInt(1, curso[0].getId());
+            }
 
             var rs = ps.executeQuery();
 

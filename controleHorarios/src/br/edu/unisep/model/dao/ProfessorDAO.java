@@ -35,13 +35,7 @@ public class ProfessorDAO {
 
     }
 
-    public List<ProfessorVO> listar() {
-
-
-        return null;
-    }
-
-    public List<ProfessorVO> listar(CursoVO curso) {
+    public List<ProfessorVO> listar(CursoVO... curso) {
 
         var professores = new ArrayList<ProfessorVO>();
 
@@ -51,16 +45,21 @@ public class ProfessorDAO {
 
             var sql = new StringBuilder()
                     .append("select p. * ")
-                    .append("from p ")
-                    .append("where exists (")
-                    .append("   select 1 ")
-                    .append("   from disciplina d ")
-                    .append("   where d.id_professor = p.id_professor ")
-                    .append("   and d.id_curso = ?);").toString();
+                    .append("from professor p ");
 
-            var ps = con.prepareStatement(sql);
-            ps.setInt(1, curso.getId());
+            if (curso.length != 0) {
+                sql.append("where exists (");
+                sql.append("   select 1 ");
+                sql.append("   from disciplina d ");
+                sql.append("   where d.id_professor = p.id_professor ");
+                sql.append("   and d.id_curso = ?);");
+            }
 
+            var ps = con.prepareStatement(sql.toString());
+
+            if (curso.length != 0) {
+                ps.setInt(1, curso[0].getId());
+            }
             var rs = ps.executeQuery();
 
             while (rs.next()){
