@@ -10,6 +10,11 @@ public class CursoVO {
 
     private Integer duracao;
 
+    @Override
+    public String toString() {
+        return nome;
+    }
+
     public Integer getId() {
         return id;
     }

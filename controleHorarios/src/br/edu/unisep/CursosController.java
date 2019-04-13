@@ -9,7 +9,6 @@ import br.edu.unisep.model.vo.CursoVO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
@@ -31,7 +30,6 @@ public class CursosController extends AppController {
     })
     @FXML private TableColumn<CursoVO, String> colTipo;
 
-    @FXML private Button novoCurso;
 
     private ObservableList<CursoVO> cursos;
     private CursoDAO dao;

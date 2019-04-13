@@ -22,7 +22,7 @@ public class MainController extends AppController {
         openScene(conteudo, "cursos.fxml");
     }
     public void abrirProfessores(ActionEvent event){
-        openScene(conteudo, "professor.fxml");
+        openScene(conteudo, "professores.fxml");
     }
     public void abrirDisciplinas(ActionEvent event){
         openScene(conteudo, "disciplina.fxml");
