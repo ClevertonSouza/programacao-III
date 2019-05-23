@@ -21,10 +21,8 @@ public class MainController extends AppController {
     public void abrirCursos(ActionEvent event){
         openScene(conteudo, "cursos.fxml");
     }
-    public void abrirProfessores(ActionEvent event){
-        openScene(conteudo, "professores.fxml");
-    }
+    public void abrirProfessores(ActionEvent event){ openScene(conteudo, "professores.fxml"); }
     public void abrirDisciplinas(ActionEvent event){
-        openScene(conteudo, "disciplina.fxml");
+        openScene(conteudo, "disciplinas.fxml");
     }
 }

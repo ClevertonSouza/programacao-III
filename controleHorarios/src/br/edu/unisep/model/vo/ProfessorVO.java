@@ -8,6 +8,11 @@ public class ProfessorVO {
 
     private String email;
 
+    @Override
+    public String toString() {
+        return nome;
+    }
+
     public Integer getId() {
         return id;
     }
